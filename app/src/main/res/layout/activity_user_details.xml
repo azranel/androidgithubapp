@@ -1,0 +1,46 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:id="@+id/user_photo"
+                android:scaleType="centerCrop"
+                android:src="@drawable/me"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/title_text_size"
+                android:text="azranel"
+                android:layout_below="@id/user_photo"
+                android:id="@+id/login_textview"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/followers_number_textview"
+                android:layout_below="@id/login_textview"/>
+            <ListView
+                android:id="@+id/followers_list"
+                android:layout_below="@id/followers_number_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></ListView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/following_number_textview"
+                android:layout_below="@id/followers_list"/>
+            <ListView
+                android:id="@+id/following_list"
+                android:layout_below="@id/following_number_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></ListView>
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/repo_item_title"
+        android:text="Combinatorial algorithms"
+        android:textSize="@dimen/item_title_size"
+        android:paddingTop="@dimen/item_top_padding"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/repo_item_language"
+        android:text="Language: Java"
+        android:layout_below="@id/repo_item_title"/>
+
+</RelativeLayout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="@dimen/user_image_dimension"
+        android:layout_height="@dimen/user_image_dimension"
+        android:id="@+id/user_image"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/me" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="azranel"
+        android:id="@+id/user_login"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/user_image"
+        android:layout_alignBottom="@+id/user_image"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textAlignment="center"
+        android:textSize="@dimen/item_title_size"
+        android:gravity="center_vertical|center_horizontal" />
+</RelativeLayout>
