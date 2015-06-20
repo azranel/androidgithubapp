@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:paddingTop="20dp"
+    android:paddingRight="20dp"
+    android:paddingLeft="20dp"
+    android:paddingBottom="20dp">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -21,26 +25,6 @@
                 android:layout_below="@id/user_photo"
                 android:id="@+id/login_textview"
                 android:gravity="center_vertical|center_horizontal" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/followers_number_textview"
-                android:layout_below="@id/login_textview"/>
-            <ListView
-                android:id="@+id/followers_list"
-                android:layout_below="@id/followers_number_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></ListView>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/following_number_textview"
-                android:layout_below="@id/followers_list"/>
-            <ListView
-                android:id="@+id/following_list"
-                android:layout_below="@id/following_number_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></ListView>
         </RelativeLayout>
     </ScrollView>
 

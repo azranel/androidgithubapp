@@ -4,8 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.example.azranel.githubapp.LoggedInActivity;
+import com.example.azranel.githubapp.UserDetailsActivity;
 import com.example.azranel.githubapp.api.GithubClient;
 import com.example.azranel.githubapp.models.User;
 import com.example.azranel.githubapp.utils.CharStreams;
@@ -21,6 +22,7 @@ import java.io.InputStreamReader;
 public class LoginToGitHubTask extends AsyncTask<String, Integer, User> {
 
     private final Context context;
+    private boolean isAuthenticated;
 
     public LoginToGitHubTask(Context context) {
         this.context = context;
@@ -28,8 +30,12 @@ public class LoginToGitHubTask extends AsyncTask<String, Integer, User> {
 
     @Override
     protected void onPostExecute(User user) {
-        Intent intent = new Intent(context, LoggedInActivity.class);
-        context.startActivity(intent);
+        if(isAuthenticated) {
+            Intent intent = new Intent(context, UserDetailsActivity.class);
+            context.startActivity(intent);
+        } else {
+            Toast.makeText(context, "Wrong login or password!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -46,9 +52,11 @@ public class LoginToGitHubTask extends AsyncTask<String, Integer, User> {
             user = User.fromJSON(responseBody);
             user.setPassword(password);
             User.setLoggedInUser(user);
+            isAuthenticated = true;
         } catch (JSONException e) {
             Log.e("GITHUB", "Can't map user from json");
             e.printStackTrace();
+            isAuthenticated = false;
         }
         return user;
     }

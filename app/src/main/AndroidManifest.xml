@@ -14,7 +14,8 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen">
+            android:launchMode="singleInstance"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,18 +23,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoggedInActivity"
-            android:label="@string/title_activity_logged_in"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
             android:name=".RepoDetailsActivity"
-            android:label="@string/title_activity_repo_details"
-            android:screenOrientation="portrait" >
+            android:label="@string/title_activity_repo_details" >
         </activity>
         <activity
             android:name=".UserDetailsActivity"
-            android:label="@string/title_activity_user_details" >
+            android:label="@string/title_activity_user_details">
+        </activity>
+        <activity
+            android:name=".IssueDetailsActivity"
+            android:label="@string/title_activity_issue_details">
         </activity>
     </application>
 

@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.azranel.githubapp.IssueDetailsActivity">
+    <item android:id="@+id/add_comment_button" android:title="New issue"
+        android:icon="@drawable/ic_comment_white_24dp" app:showAsAction="always"
+        />
+</menu>

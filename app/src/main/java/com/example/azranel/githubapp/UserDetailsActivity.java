@@ -1,57 +1,130 @@
 package com.example.azranel.githubapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 
+import com.example.azranel.githubapp.adapters.SectionsPagerAdapter;
+import com.example.azranel.githubapp.asynctasks.DownloadReposAndSetThemOnAdapterTask;
 import com.example.azranel.githubapp.asynctasks.UsersListSetterTask;
+import com.example.azranel.githubapp.fragments.FragmentHolder;
+import com.example.azranel.githubapp.fragments.UsersListHolderFragment;
 import com.example.azranel.githubapp.models.User;
-import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 
+public class UserDetailsActivity extends ActionBarActivity implements ActionBar.TabListener {
 
-public class UserDetailsActivity extends ActionBarActivity {
-    private ImageView userPhoto;
-    private TextView userLogin;
-    private TextView followersNumber;
-    private TextView followingNumber;
-    private ListView followersList;
-    private ListView followingList;
+
+    private SectionsPagerAdapter pagerAdapter;
+    private User user;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_user_section);
+        setContentView(R.layout.activity_logged_in);
+        user = getUserFromIntentOrLoggedIn();
         injectViews();
-        setupView();
+        initializeView(this);
     }
 
     private void injectViews() {
-        userPhoto = (ImageView) findViewById(R.id.user_photo);
-        userLogin = (TextView) findViewById(R.id.user_login);
-        followersNumber = (TextView) findViewById(R.id.followers_number_textview);
-        followingNumber = (TextView) findViewById(R.id.following_number_textview);
-        followersList = (ListView) findViewById(R.id.followers_list);
-        followingList = (ListView) findViewById(R.id.following_list);
+        mViewPager = (ViewPager) findViewById(R.id.pager);
     }
 
-    private void setupView() {
-        User user = getUserFromIntent();
+    private void initializeView(final Context context) {
         setTitle(user.getLogin());
-        userLogin.setText(user.getLogin());
-        followersNumber.setText("Followers: " + String.valueOf(user.getFollowers()));
-        followingNumber.setText("Following: " + String.valueOf(user.getFollowing()));
-        Picasso.with(this).load(user.getAvatarUrl()).into(userPhoto);
-        new UsersListSetterTask(user, this, true).setUsersListView(followersList).execute();
-        new UsersListSetterTask(user, this, false).setUsersListView(followingList).execute();
-//        new UsersListSetterTask(user, this).setFollowersListView(followersList)
-//                .setFollowingListView(followingList).setFollowersNumber(followersNumber)
-//                .setFollowingNumber(followingNumber).execute();
+        pagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), context);
+        pagerAdapter.addNewSection(User.SECTIONS_NAME, user);
+        getFollowersAndAddThemToAdapter();
+        getFollowingAndAddThemToAdapter();
+        getReposAndAddThemToAdapter();
     }
 
-    public User getUserFromIntent() {
-        return (User) getIntent().getSerializableExtra(User.USER_KEY);
+    private void getFollowingAndAddThemToAdapter() {
+        UsersListSetterTask task = new UsersListSetterTask(user, this, false) {
+            @Override
+            protected void onPostExecute(List<User> users) {
+                FragmentHolder followingFragment =
+                        UsersListHolderFragment.newInstance(users, "Following");
+                pagerAdapter.addFragment(followingFragment);
+            }
+        };
+        task.execute();
+    }
+
+    private void getFollowersAndAddThemToAdapter() {
+        UsersListSetterTask task = new UsersListSetterTask(user, this, true) {
+            @Override
+            protected void onPostExecute(List<User> users) {
+                FragmentHolder followersFragment =
+                        UsersListHolderFragment.newInstance(users, "Followers");
+                pagerAdapter.addFragment(followersFragment);
+            }
+        };
+        task.execute();
+    }
+
+    private User getUserFromIntentOrLoggedIn() {
+        User user = null;
+        Intent intent = getIntent();
+        if(intent.hasExtra(User.USER_KEY))
+            user = (User) intent.getSerializableExtra(User.USER_KEY);
+        else user = User.getLoggedInUser();
+        return user;
+    }
+
+    private void getReposAndAddThemToAdapter() {
+        DownloadReposAndSetThemOnAdapterTask task = new DownloadReposAndSetThemOnAdapterTask(pagerAdapter, user) {
+            @Override
+            protected void onPostExecute(Object o) {
+                setupUI();
+            }
+        };
+        task.execute();
+    }
+
+    private void setupUI() {
+        final ActionBar actionBar = getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        mViewPager.setAdapter(pagerAdapter);
+
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                actionBar.setSelectedNavigationItem(position);
+            }
+        });
+
+        for (int i = 0; i < pagerAdapter.getCount(); i++) {
+            actionBar.addTab(
+                    actionBar.newTab()
+                            .setText(pagerAdapter.getPageTitle(i))
+                            .setTabListener(this));
+        }
+    }
+
+
+
+
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        mViewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 }

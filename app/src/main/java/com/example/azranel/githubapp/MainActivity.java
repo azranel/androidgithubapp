@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.azranel.githubapp.asynctasks.LoginToGitHubTask;
+import com.example.azranel.githubapp.models.User;
 
 
 public class MainActivity extends Activity {
@@ -22,6 +24,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         injectViews();
+        User.setLoggedInUser(null);
     }
 
     private void injectViews() {
@@ -33,9 +36,12 @@ public class MainActivity extends Activity {
     public void loginToGitHub(View view) {
         final String userLogin = login.getText().toString();
         final String userPassword = password.getText().toString();
-
-        LoginToGitHubTask task = new LoginToGitHubTask(this);
-        task.execute(userLogin, userPassword);
+        if(userLogin.equals("") || userPassword.equals("")) {
+            Toast.makeText(this, "Login or password is empty", Toast.LENGTH_SHORT).show();
+        } else {
+            LoginToGitHubTask task = new LoginToGitHubTask(this);
+            task.execute(userLogin, userPassword);
+        }
     }
 
 

@@ -5,8 +5,11 @@ import android.util.Log;
 
 import com.example.azranel.githubapp.models.User;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -23,6 +26,11 @@ public class GithubClient {
     public static final int TIMEOUT_MILLIS = 10000;
     public static final int CONNECT_TIMEOUT_MILLIS = 15000;
 
+    public InputStream getRepos(String login) {
+        String path = "/users/" + login + "/repos";
+        return getResource(path, false);
+    }
+
     public enum HTTPMethods {
         GET,
         POST,
@@ -31,16 +39,23 @@ public class GithubClient {
     }
 
 
-    public InputStream getResource(String path) {
+    public InputStream getResource(String path, boolean isReadme) {
         URL url = buildURL(path);
         InputStream is = null;
         HttpURLConnection conn;
         try {
             conn = (HttpURLConnection) url.openConnection();
             setupConnection(conn, HTTPMethods.GET);
+            if(isReadme)
+                conn.setRequestProperty("Accept", "application/vnd.github.v3.html");
 
             conn.connect();
-            is = conn.getInputStream();
+
+            int responseCode = conn.getResponseCode();
+            if(responseCode < 400)
+                is = conn.getInputStream();
+            else
+                is = conn.getErrorStream();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -96,19 +111,67 @@ public class GithubClient {
         return is;
     }
 
+    public InputStream postResource(String path, JSONObject body) {
+        URL url = buildURL(path);
+        InputStream stream = null;
+        HttpURLConnection conn;
+        final String credientials = credientials();
+        int responseCode = 9001;
+        try {
+            conn = (HttpURLConnection) url.openConnection();
+            setupConnection(conn, HTTPMethods.POST);
+            conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            conn.setDoOutput(true);
+
+            OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+
+            writer.write(body.toString());
+            writer.close();
+            responseCode = conn.getResponseCode();
+            Log.v("GITHUB", "Posting comment. Response code: " + String.valueOf(responseCode));
+
+            if(responseCode < 400)
+                stream = conn.getInputStream();
+            else
+                stream = conn.getErrorStream();
+        } catch (IOException e) {
+            Log.e("GITHUB", "Error in posting resource");
+            e.printStackTrace();
+        }
+        return stream;
+    }
+
+    public InputStream getIssues(String owner, String repoName) {
+        String path = "/repos/" + owner + "/" + repoName + "/issues?state=all";
+        return getResource(path, false);
+    }
+
     public InputStream getReadme(String owner, String repoName) {
         String path = "/repos/" + owner + "/" + repoName + "/contents/README.md";
-        return getResource(path);
+        return getResource(path, true);
     }
 
     public InputStream getFollowers(String owner) {
         String path = "/users/" + owner + "/followers";
-        return getResource(path);
+        return getResource(path, false);
     }
 
     public InputStream getFollowing(String owner) {
         String path = "/users/" + owner + "/following";
-        return getResource(path);
+        return getResource(path, false);
+    }
+
+    public InputStream getCommentsForIssue(String owner, String repoName, int issueNumber) {
+        String path = "/repos/" + owner + "/" + repoName + "/issues/"
+                + String.valueOf(issueNumber) + "/comments";
+        return getResource(path, false);
+    }
+
+    public InputStream postCommentToIssue(String owner, String repoName,
+                                          int issueNumber, JSONObject body) {
+        String path = "/repos/" + owner + "/" + repoName + "/issues/"
+                + String.valueOf(issueNumber) + "/comments";
+        return postResource(path, body);
     }
 
 

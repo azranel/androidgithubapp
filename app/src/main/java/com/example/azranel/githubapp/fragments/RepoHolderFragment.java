@@ -1,6 +1,8 @@
 package com.example.azranel.githubapp.fragments;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Html;
@@ -8,11 +10,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TextView;
 
 import com.example.azranel.githubapp.R;
-import com.example.azranel.githubapp.api.EndpointBuilder;
-import com.example.azranel.githubapp.api.GithubEndpoint;
 import com.example.azranel.githubapp.asynctasks.ReadmeDownloadAndSetTask;
 import com.example.azranel.githubapp.models.Repo;
 import com.example.azranel.githubapp.models.User;
@@ -22,27 +24,42 @@ import com.example.azranel.githubapp.utils.CharStreams;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * Created by azranel on 31.05.15.
  */
 public class RepoHolderFragment extends FragmentHolder {
-    private final Context context;
-    private final Repo repo;
+    private Repo repo;
 
     private TextView author;
     private TextView language;
     private TextView description;
     private TextView title;
-    private TextView readmeContent;
+    private WebView readmeContent;
 
-    public RepoHolderFragment(Context context, Repo repo, String sectionName) {
-        this.context = context;
-        this.repo = repo;
-        this.sectionName = "Repo";
+    public RepoHolderFragment() {
+        this.sectionName = Repo.SINGLE_SECTION_NAME;
+    }
+
+
+    public static RepoHolderFragment newInstance(Repo repo) {
+        RepoHolderFragment fragment = new RepoHolderFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(Repo.REPO_KEY, repo);
+        fragment.setArguments(args);
+        return fragment;
+    }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        repo = (Repo) getArguments().getSerializable(Repo.REPO_KEY);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(Repo.REPO_KEY, repo);
+        super.onSaveInstanceState(outState);
     }
 
     @Nullable
@@ -59,7 +76,7 @@ public class RepoHolderFragment extends FragmentHolder {
         language = (TextView) view.findViewById(R.id.repo_details_language);
         description = (TextView) view.findViewById(R.id.repo_details_desrciption);
         title = (TextView) view.findViewById(R.id.repo_details_title);
-        readmeContent = (TextView) view.findViewById(R.id.repo_details_readme);
+        readmeContent = (WebView) view.findViewById(R.id.repo_details_readme);
     }
 
     private void setupView() {
@@ -67,37 +84,18 @@ public class RepoHolderFragment extends FragmentHolder {
         language.setText(repo.getLanguage());
         description.setText(repo.getDescription());
         title.setText(repo.getName());
+        readmeContent.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+                return true;
+            }
+        });
         setReadmeContent();
     }
 
     private void setReadmeContent() {
         new ReadmeDownloadAndSetTask(readmeContent, repo).execute();
-//        GithubEndpoint api = new EndpointBuilder().createServiceWithAuth(
-//                User.getLoggedInUser().getLogin(), User.getLoggedInUser().getPassword());
-//
-//
-//        api.getReadmeForOwnerRepo(repo.getOwner().getLogin(), repo.getName(),
-//                new Callback<Response>() {
-//                    @Override
-//                    public void success(Response response, Response response2) {
-//                        String result = null;
-//                        try {
-//                            result = CharStreams.toString(new InputStreamReader(response.getBody().in()));
-//                        } catch (IOException e) {
-//                            Log.e("GITHUB", "Could not parse README.md from response");
-//                            e.printStackTrace();
-//                        }
-//
-//
-//                        readmeContent.setText(Html.fromHtml(result));
-//                    }
-//
-//                    @Override
-//                    public void failure(RetrofitError error) {
-//                        Log.e("GITHUB", "Getting README.md failed");
-//                        readmeContent.setText("No README.md");
-//                        error.printStackTrace();
-//                    }
-//                });
     }
 }

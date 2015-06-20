@@ -32,6 +32,7 @@
         android:layout_below="@id/login_activity_title"
         android:id="@+id/login_activity_login_edittext"
         android:inputType="textEmailAddress"
+        android:text="azranel"
         android:paddingBottom="@dimen/login_padding"/>
     <TextView
         android:layout_width="wrap_content"
@@ -43,6 +44,7 @@
         android:paddingRight="@dimen/label_right_padding"
         android:paddingBottom="@dimen/login_padding"/>
     <EditText
+        android:text="o7i9srtd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/login_activity_password_label"

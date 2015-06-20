@@ -10,4 +10,5 @@
     <dimen name="item_top_padding">8dp</dimen>
     <dimen name="item_title_size">30dp</dimen>
     <dimen name="user_image_dimension">90dp</dimen>
+    <dimen name="issue_title_size">22dp</dimen>
 </resources>

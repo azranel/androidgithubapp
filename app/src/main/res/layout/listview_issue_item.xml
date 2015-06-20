@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:paddingRight="10dp"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ListView in IssueAdapter not working!"
+        android:id="@+id/issue_title"
+        android:textSize="@dimen/issue_title_size"
+        android:textStyle="bold"
+        android:paddingBottom="10dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Author: azranel"
+        android:id="@+id/issue_author"
+        android:layout_below="@id/issue_title"
+        android:textStyle="italic"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Assignee: bartel"
+        android:id="@+id/issue_assignee"
+        android:layout_below="@id/issue_author"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/issue_comments"
+        android:text="Comments: 4"
+        android:layout_below="@id/issue_title"
+        android:layout_alignParentRight="true"/>
+</RelativeLayout>

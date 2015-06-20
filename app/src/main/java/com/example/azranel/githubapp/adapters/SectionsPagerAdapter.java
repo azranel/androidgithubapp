@@ -6,12 +6,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.example.azranel.githubapp.fragments.FragmentHolder;
+import com.example.azranel.githubapp.fragments.IssueListHolderFragment;
 import com.example.azranel.githubapp.fragments.RepoHolderFragment;
 import com.example.azranel.githubapp.fragments.RepoListHolderFragment;
 import com.example.azranel.githubapp.fragments.UserholderFragment;
+import com.example.azranel.githubapp.models.Issue;
 import com.example.azranel.githubapp.models.Repo;
 import com.example.azranel.githubapp.models.User;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -19,7 +22,7 @@ import java.util.Locale;
 /**
  * Created by azranel on 10.05.15.
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
+public class SectionsPagerAdapter extends FragmentPagerAdapter implements Serializable {
     private List<FragmentHolder> list = new LinkedList<>();
     private Context context;
 
@@ -28,18 +31,29 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         this.context = context;
     }
 
+    public void addFragment(FragmentHolder fragment) throws IllegalArgumentException {
+        if(fragment != null)
+            list.add(fragment);
+        else
+            throw new IllegalArgumentException("fragment is null");
+    }
+
     public <T> void addNewSection(String sectionName, Object data)
             throws IllegalArgumentException {
         FragmentHolder fragment = null;
         switch (sectionName) {
             case Repo.LIST_SECTIONS_NAME:
-                fragment = new RepoListHolderFragment(context, sectionName, new ReposAdapter(context, (List<Repo>) data));
+                fragment = RepoListHolderFragment.newInstance((List<Repo>) data);
                 break;
             case User.SECTIONS_NAME:
-                fragment = new UserholderFragment(sectionName, context);
+                fragment = UserholderFragment.newInstance((User) data);
                 break;
             case Repo.SINGLE_SECTION_NAME:
-                fragment = new RepoHolderFragment(context,(Repo) data, sectionName);
+                fragment = RepoHolderFragment.newInstance((Repo) data);
+                break;
+            case Issue.LIST_SECTION_NAME:
+                //fragment = new IssueListHolderFragment(context, sectionName, new IssueAdapter(context, (List<Issue>) data));
+                fragment = IssueListHolderFragment.newInstance((List<Issue>) data);
                 break;
         }
         if(fragment != null)

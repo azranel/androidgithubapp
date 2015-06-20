@@ -12,4 +12,9 @@
     <string name="title_section3">Section 3</string>
     <string name="title_activity_repo_details">RepoDetailsActivity</string>
     <string name="title_activity_user_details">UserDetailsActivity</string>
+    <string name="title_activity_issue_details">IssueDetailsActivity</string>
+    <string name="add_comment">Add comment</string>
+    <string name="dialog_add_comment_message">Write comment below</string>
+    <string name="dialog_add_comment_positive_button_label">Add comment</string>
+    <string name="dialog_add_comment_negative_button_label">Cancel</string>
 </resources>

@@ -7,11 +7,15 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 
 import com.example.azranel.githubapp.adapters.SectionsPagerAdapter;
+import com.example.azranel.githubapp.asynctasks.DownloadIssuesForRepo;
+import com.example.azranel.githubapp.models.Issue;
 import com.example.azranel.githubapp.models.Repo;
 
+import java.util.List;
 
 
 public class RepoDetailsActivity extends ActionBarActivity implements ActionBar.TabListener {
+    private static final String PAGER_KEY = "pager_key";
 
     private ViewPager pager;
     private SectionsPagerAdapter pagerAdapter;
@@ -24,6 +28,7 @@ public class RepoDetailsActivity extends ActionBarActivity implements ActionBar.
         initializeView();
     }
 
+
     private void injectViews() {
         pager = (ViewPager) findViewById(R.id.pager);
     }
@@ -34,11 +39,15 @@ public class RepoDetailsActivity extends ActionBarActivity implements ActionBar.
 
         pagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), this);
         pagerAdapter.addNewSection(Repo.SINGLE_SECTION_NAME, repo);
-
-        pager.setAdapter(pagerAdapter);
-        setupPager();
-
+        new DownloadIssuesForRepo(repo) {
+            @Override
+            protected void onPostExecute(List<Issue> issues) {
+                pagerAdapter.addNewSection(Issue.LIST_SECTION_NAME, issues);
+                setupPager();
+            }
+        }.execute();
     }
+
     private void setupPager() {
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

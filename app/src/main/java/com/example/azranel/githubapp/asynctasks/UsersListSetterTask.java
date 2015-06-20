@@ -45,12 +45,18 @@ public class UsersListSetterTask extends AsyncTask<Object, Integer, List<User>> 
         return this;
     }
 
+    public UsersListSetterTask setNumberTextView(TextView textView) {
+        this.numberTextView = textView;
+        return this;
+    }
+
     @Override
     protected void onPostExecute(List<User> users) {
         if(users != null) {
             usersListView.setAdapter(new UsersAdapter(users, context));
             if(numberTextView != null) {
-                numberTextView.setText(String.valueOf(users.size()));
+                String whatTextView = isFollowers ? "Followers: " : "Following: ";
+                numberTextView.setText(whatTextView + String.valueOf(users.size()));
             }
         } else throw new NullPointerException("users in onPostExecute is null");
     }
@@ -66,22 +72,6 @@ public class UsersListSetterTask extends AsyncTask<Object, Integer, List<User>> 
             e.printStackTrace();
         }
         return following;
-
-//        api.getFollowingForUser(user.getLogin(), new Callback<List<User>>() {
-//            @Override
-//            public void success(List<User> users, Response response) {
-//                Log.v("GITHUB", "Following downloaded");
-//                if(followingNumber != null)
-//                    followingNumber.setText("Following: " + String.valueOf(users.size()));
-//                followingListView.setAdapter(new UsersAdapter(users, context));
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError error) {
-//                Log.e("GITHUB", "Failed to download following");
-//                error.printStackTrace();
-//            }
-//        });
     }
 
     private List<User> getUsersForFollowersList() {
@@ -95,23 +85,6 @@ public class UsersListSetterTask extends AsyncTask<Object, Integer, List<User>> 
             e.printStackTrace();
         }
         return followers;
-
-
-//        api.getFollowersForUser(user.getLogin(), new Callback<List<User>>() {
-//            @Override
-//            public void success(List<User> users, Response response) {
-//                Log.v("GITHUB", "Followers downloaded");
-//                if (followersNumber != null)
-//                    followersNumber.setText("Followers: " + String.valueOf(users.size()));
-//                followersListView.setAdapter(new UsersAdapter(users, context));
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError error) {
-//                Log.e("GITHUB", "Failed to download followers");
-//                error.printStackTrace();
-//            }
-//        });
     }
 
     private void setOnItemListener(final ListView listView) {
